@@ -1,0 +1,6 @@
+Genre: Top Down Scrolling Schooter
+Name: Mordred's Revenge
+Goal: The player will have to reach a score of at least 20,000 to advance to the second level. For the second level, the player must defeat the boss to then win the game.
+Basic Mechanics: Arrow Keys for Up, Down, Left, and Right will move the character. Spacebar used to shoot.
+Levels/Modes Differences: The first level will have the character fighting drones with single bullets being fired at a time. The second level will have the character fighting drones again, but there will be a boss at the end of the level. Also, the character will be able to fire two projectiles at a time. There will
+also be more drones on the second level.
