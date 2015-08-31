@@ -9,19 +9,21 @@ public class Projectile {
 	private Circle myProjectile;
 	/*
 	 * Default constructor to create new projectile. 
-	 * 
 	 */
 	public Projectile() {
 		myProjectile = new Circle(5, Color.BLUE);
 		
 	}
+	
+	public Circle getProjectile() {
+		return myProjectile;
+	}
 	/*
-	 * 
 	 * This method will initialize the motion of the projectile that will come from the ship
 	 */
-	public void initializeMotionProjectile(ImageView ship) {
-		double xPosition = ship.getX();
-		double yPosition = ship.getY();
+	public void initializeMotionProjectile(Circle ship) {
+		double xPosition = ship.getCenterX();
+		double yPosition = ship.getCenterY();
 		myProjectile.setCenterX(xPosition);
 		myProjectile.setCenterY(yPosition);
 	}
