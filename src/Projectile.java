@@ -5,7 +5,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.image.ImageView;
 public class Projectile {
 	
-	private static int PROJECTILE_SPEED = -100; //speed of projectile that will be fired
+	private final int PROJECTILE_SPEED = -100; //speed of projectile that will be fired from user
 	private Circle myProjectile;
 	/*
 	 * Default constructor to create new projectile. 

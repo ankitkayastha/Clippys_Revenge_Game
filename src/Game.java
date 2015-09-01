@@ -1,22 +1,31 @@
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
+
 import java.util.*;
 public class Game {
-	private static String TITLE = "Mordred's Revenge";
-	private static int SIZE = 700;
-	private static int KEY_INPUT_SPEED = 5;
+	private final String TITLE = "Mordred's Revenge";
+	private final int SIZE = 700;
+	private final int KEY_INPUT_SPEED = 5;
 	private Group root; //scene graph to organize scene
 	private Scene myScene; 
 	private Circle ship;
 	private List<Enemy> myEnemyList; //list of enemies
-	private static int counter = 0;
+	private int counter = 0;
 	private List<Projectile> myList; //list will contain projectiles to be updated (movement)
-	
 	private Random myRandom; //random object for xPosition of ship
+	private Text myText; //textfield to hold player's score
+	private String myScore;
+	private ImageView background;
+	
+	
 	public String getTitle() {
 		return TITLE;
 	}
@@ -31,10 +40,16 @@ public class Game {
 		myScene = new Scene(root, width, height);
 		ship = new Circle(10, Color.RED);
 		root.getChildren().add(ship);
-		ship.setCenterX(350);
-		ship.setCenterY(600);
-		
-		
+		ship.setCenterX(SIZE/2);
+		ship.setCenterY(SIZE - 100);
+		myText = new Text(0, SIZE - 50, Integer.toString(100));
+		root.getChildren().add(myText);
+		Image image = new Image(getClass().getClassLoader().getResourceAsStream("images.jpe"));
+		background = new ImageView(image);
+		background.setFitHeight(SIZE);
+		background.setFitWidth(SIZE);
+		background.toBack();
+		//root.getChildren().add(background);
 		myScene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
 		myList = new ArrayList<Projectile>();
 		myEnemyList = new ArrayList<Enemy>();
@@ -48,54 +63,32 @@ public class Game {
 	public void step(double elapsedTime) {
 		
 		counter++;
-		//System.out.println("This method is being called");
 		//call update method for each projectile in myLIst
-		//Enemy enemy = null;
 		for (Projectile x: myList) {
-			for (Enemy y: myEnemyList) {
 				x.updatePosition(elapsedTime);
-				if (x.getProjectile().getBoundsInParent().intersects(y.getEnemy().getBoundsInParent())) 
-					System.out.println("Hello"); }
 		}
-		//for (Enemy y: myEnemyList)
-			//y.updatePositionEnemy(elapsedTime);
-		if (Math.floorMod(counter, 100) == 0) {
+		if (Math.floorMod(counter, 200) == 0) {
 			Enemy enemy = new Enemy();
 			myEnemyList.add(enemy);
-			//System.out.println(myEnemyList.size());
 			root.getChildren().add(enemy.getEnemy());
-			enemy.initializePositionEnemy();}
-			//for (Enemy y: myEnemyList)
-				//y.updatePositionEnemy(elapsedTime);}
-		//System.out.println(myEnemyList.size());
-		for (int i = 0; i < myEnemyList.size(); i++) {
-			myEnemyList.get(i).updatePositionEnemy(elapsedTime); 
+			enemy.initializePositionEnemy();
 		}
-			//System.out.println(i); }
-		//System.out.println(myEnemyList.size());
-			//System.out.println("New position for " + i + " is " + myEnemyList.get(i).getEnemy().getCenterY()); }
-		//System.out.println(myEnemyList.size());
-		//enemy.s(myRandom.nextInt(SIZE));
 		
-		//if (myEnemyList.size() <= 5)
-		//enemy.initializePositionEnemy();
-		//for (Enemy y: myEnemyList)
-			//enemy.updatePositionEnemy(elapsedTime);
-		//circle.setCenterX(myRandom.nextInt(SIZE));
-		//for (Circle mycircle: myEnemyList)
-			//circle.updatePosition(elapsedTime);
+		for (int i = 0; i < myEnemyList.size(); i++) {
+			myEnemyList.get(i).updatePositionEnemy(elapsedTime);
+			for (int j = 0; j < myList.size(); j++) {
+				if (myEnemyList.get(i).getEnemy().getBoundsInParent().intersects(myList.get(j).getProjectile().getBoundsInParent()) && myList.get(j).getProjectile().isVisible() && myEnemyList.get(i).getEnemy().isVisible()) {
+					myEnemyList.get(i).getEnemy().setVisible(false);
+					myList.get(j).getProjectile().setVisible(false);
+					System.out.println("Hello!"); } } }  
+		
+		for (int i = 0; i < myEnemyList.size(); i++) {
+			if (myEnemyList.get(i).getEnemy().getBoundsInParent().intersects(ship.getBoundsInParent()) && (myEnemyList.get(i).getEnemy().isVisible()))
+					myText.setText(Integer.toString(Integer.parseInt(myText.getText()) - 5)); 
+			}
 		
 	}
-	/*public void stepTwo (double elapsedTime) {
-		counter++;
-		if (Math.floorMod(counter, 100) == 0) {
-			Enemy enemy = new Enemy();
-			myEnemyList.add(enemy);
-			root.getChildren().add(enemy.getEnemy());
-			enemy.initializePositionEnemy(); }
-		for (Enemy y: myEnemyList)
-			y.updatePositionEnemy(elapsedTime);
-	} */
+	
 	/*
 	 * Handles key input
 	 */
