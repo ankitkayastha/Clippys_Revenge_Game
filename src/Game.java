@@ -1,4 +1,5 @@
 
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
@@ -14,7 +15,7 @@ import javafx.scene.paint.Color;
 import java.util.*;
 public class Game {
 	private static final String TITLE = "Clippy's Revenge";
-	private static final int SIZE = 700;
+	public static final int SIZE = 700;
 	private static final int KEY_INPUT_SPEED = 5;
 	private Group root; //scene graph to organize scene
 	private Scene myScene; 
@@ -25,14 +26,21 @@ public class Game {
 	private Random myRandom; //random object for xPosition of ship
 	private Text myHealth; //text object to hold player's health
 	private Text myScore; //text object to hold player's score
-	private Image clicker;
+	private ImageView losingScreen;
 	private Image click; 
-	private ImageView background; 
+	private ImageView background;
+	private Runnable runnable;
 	String[] clippyArray = new String[10];
 	private List<Projectile> myEnemyProjectile;//list of enemy projectiles
-	
 	public String getTitle() {
 		return TITLE;
+	}
+	
+	public Group getGroup() {
+		return root;
+	}
+	public Game (Runnable y) {
+		runnable = y;
 	}
 	/*
 	 * Initialize and create the game's scene
@@ -48,15 +56,18 @@ public class Game {
 		clippy = new ImageView(image);
 		//ship = new Circle(10, Color.RED);
 		root.getChildren().add(clippy);
-		clippy.setX(SIZE/2);
-		clippy.setY(SIZE/2);
-		myHealth = new Text(0, SIZE - 50, Integer.toString(100));
-		Text scoreLabel = new Text(SIZE - 50, SIZE - 660, "SCORE");
+		clippy.setX(SIZE/2 - 50);
+		clippy.setY(SIZE - 100);
+		Text healthLabel = new Text(25, SIZE - 65, "HEALTH");
+		healthLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
+		myHealth = new Text(25, SIZE - 50, Integer.toString(100));
+		Text scoreLabel = new Text(SIZE - 50, SIZE - 665, "SCORE");
 		scoreLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
 		myScore = new Text(SIZE - 50, SIZE - 650, Integer.toString(0));
 		root.getChildren().add(myHealth);
 		root.getChildren().add(myScore);
 		root.getChildren().add(scoreLabel);
+		root.getChildren().add(healthLabel);
 		Image imageTwo = new Image(getClass().getClassLoader().getResourceAsStream("WindowsBackground.jpg"));
 		background = new ImageView(imageTwo);
 		background.setFitHeight(SIZE);
@@ -66,19 +77,28 @@ public class Game {
 		click = new Image(getClass().getClassLoader().getResourceAsStream("click.png"));
 		//clicker = new ImageView(click); 
 		//root.getChildren().add(clicker);
+		/*Image screen = new Image(getClass().getClassLoader().getResourceAsStream("windows8.png"));
+		losingScreen = new ImageView(screen);
+		losingScreen.setFitWidth(SIZE);
+		losingScreen.setFitHeight(SIZE); */
 		myScene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
 		myList = new ArrayList<Projectile>();
 		myEnemyList = new ArrayList<Enemy>();
 		myEnemyProjectile = new ArrayList<Projectile>();
 		return myScene;
 	} 
-	
+	public int getHealth() {
+		return (Integer.parseInt(myHealth.getText()));
+	}
 	/*
 	 * This method will run during the game loop to update the shapes/game
 	 */
 	
 	public void step(double elapsedTime) {
+		if (Integer.parseInt(myHealth.getText()) <= 0) {
+			
 		
+		runnable.run(); }
 		counter++;
 		//call update method for each projectile in myLIst
 		for (Projectile x: myList) {
@@ -86,7 +106,7 @@ public class Game {
 		}
 		
 		//initialize motion of enemies
-		if (Math.floorMod(counter, 200) == 0) {
+		if (Math.floorMod(counter, 100) == 0) {
 			Enemy enemy = new Enemy();
 			myEnemyList.add(enemy);
 			root.getChildren().add(enemy.getEnemy());
@@ -108,7 +128,10 @@ public class Game {
 				x.updatePositionEnemy(elapsedTime);  */
 		//detection between enemy and projectile fired from user
 		for (int i = 0; i < myEnemyList.size(); i++) {
-			myEnemyList.get(i).updatePositionEnemy(elapsedTime);
+			//if (myEnemyList.get(i).getEnemy().getX() > SIZE || myEnemyList.get(i).getEnemy().getY() > SIZE || !myEnemyList.get(i).getEnemy().isVisible())
+				//myEnemyList.remove(i);
+			//if (myEnemyList.size() > 0)
+				myEnemyList.get(i).updatePositionEnemy(elapsedTime);
 			for (int j = 0; j < myList.size(); j++) {
 				if (myEnemyList.get(i).getEnemy().getBoundsInParent().intersects(myList.get(j).getProjectile().getBoundsInParent()) && myList.get(j).getProjectile().isVisible() && myEnemyList.get(i).getEnemy().isVisible()) {
 					myEnemyList.get(i).getEnemy().setVisible(false);
@@ -147,6 +170,8 @@ public class Game {
 				x.setHasCollided(true);
 			}
 		}
+		
+		
 	}
 	/*
 	 * Handles key input
@@ -154,8 +179,10 @@ public class Game {
 	private void handleKeyInput(KeyCode code) {
 		 switch(code) {
 		 	case SPACE: //fire projectile
-		 		int index = myRandom.nextInt(10);
+		 		//int index = myRandom.nextInt();
+		 		//System.out.println()
 		 		Projectile projectileTip = new Projectile();
+		 		//System.out.println(projectileTip.getClippyTips().length);
 		 		myList.add(projectileTip);
 		 		root.getChildren().add(projectileTip.getProjectile()); //show projectile in window
 		 		projectileTip.initializeMotionProjectile(clippy);
@@ -171,6 +198,15 @@ public class Game {
 		 		break;
 		 	case UP:
 		 		clippy.setY(clippy.getY() - KEY_INPUT_SPEED);
+		 		break;
+		 	case H:
+		 		myHealth.setText(Integer.toString(100));
+		 		break;
+		 	case D:
+		 		myHealth.setText(Integer.toString(0));
+		 		break;
+		 	case S:
+		 		myScore.setText(Integer.toString(Integer.parseInt(myScore.getText()) + 500));
 		 		break;
 		 	default:
 		 }

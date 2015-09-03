@@ -2,6 +2,8 @@
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.image.*; 
 import java.util.*;
@@ -12,8 +14,8 @@ public class Projectile {
 	private ImageView myEnemyProjectile;
 	private Text myProjectile;
 	private boolean hasCollided = false;
-	private Random myRandom;
-	private String[] clippyTips = {"Hi"};
+	private Random myClippyRandom = new Random();
+	private String[] clippyTips = {"Hi! I am Clippy, your office assistant.",  "Would you like some assistance today?", "It looks like you're writing a letter.", "Would you like help?", "Are you sure?", "This feature can help you.", "Are you really sure?", "I think it might be the best thing for you."};
 	/*
 	 * Default constructor to create new projectile. 
 	 */
@@ -21,10 +23,19 @@ public class Projectile {
 		myEnemyProjectile = new ImageView(click);
 		
 	}
-	
+	public String[] getClippyTips() {
+		return clippyTips;
+	}
 	public Projectile() {
+		//clippyTips[0] = "Hi! I am Clippy";
+		//clippyTips[1] = "Hi!";
+		//System.out.println(clippyTips.length);
+		//System.out.println(myRandom.nextInt(clippyTips.length));
 		//int index = myRandom.nextInt(clippyTips.length);
-		myProjectile = new Text(clippyTips[0]);
+		myProjectile = new Text(clippyTips[myClippyRandom.nextInt(clippyTips.length)]);
+		myProjectile.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
+		//myProjectile.setWrappingWidth(5);
+		//myProjectile.setWrappingLength()
 	}
 	public boolean getHasCollided() {
 		return hasCollided;
@@ -44,7 +55,7 @@ public class Projectile {
 	 * This method will initialize the motion of the projectile that will come from the clippy
 	 */
 	public void initializeMotionProjectile(ImageView clippy) {
-		double xPosition = clippy.getX() + 25;
+		double xPosition = clippy.getX() - 5;
 		double yPosition = clippy.getY();
 		myProjectile.setX(xPosition);
 		myProjectile.setY(yPosition);
