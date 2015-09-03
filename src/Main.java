@@ -16,7 +16,7 @@ public class Main extends Application {
 	private static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
 	private ImageView losingScreen;
 	private Timeline animation;
-	private setSplashScreen splash;
+	private SplashScreen splash;
 	private Game myGame;
 	public Timeline getAnimation() {
 		return animation;
@@ -26,10 +26,13 @@ public class Main extends Application {
 		
 		myGame = new Game(() -> setLosingScreen(myGame.getGroup())); //create new game
 		s.setTitle(myGame.getTitle()); //set title of game
-		splash = new setSplashScreen(() -> setScene(s));
+		splash = new SplashScreen(() -> setScene(s));
 		Scene splashScene = splash.init(SIZE, SIZE);
 		s.setScene(splashScene); 
 		s.show();
+		//GameLevelOne one = new GameLevelOne();
+		//s.setScene(one.initialize(SIZE, SIZE));
+		//s.show();
 		//attach game to stage and display it
 		//setScene(s);
 		//if (myGame.getHealth() <= 95)

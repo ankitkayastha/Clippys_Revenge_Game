@@ -14,7 +14,7 @@ public class Enemy {
 	 */
 	
 	public Enemy() {
-		Image enemy = new Image(getClass().getClassLoader().getResourceAsStream("images.jpe"));
+		Image enemy = new Image(getClass().getClassLoader().getResourceAsStream("WindowsUser.jpe"));
 		myEnemy = new ImageView(enemy);
 	}
 	
@@ -39,6 +39,5 @@ public class Enemy {
 	public void updatePositionEnemy(double elapsedTime) {
 		myEnemy.setY(myEnemy.getY() + ENEMY_SPEED * elapsedTime);
 	}
-	
 	
 }

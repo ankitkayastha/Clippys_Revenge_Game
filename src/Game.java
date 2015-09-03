@@ -32,6 +32,10 @@ public class Game {
 	private Runnable runnable;
 	String[] clippyArray = new String[10];
 	private List<Projectile> myEnemyProjectile;//list of enemy projectiles
+	
+	public Game() {
+		
+	}
 	public String getTitle() {
 		return TITLE;
 	}
@@ -46,7 +50,6 @@ public class Game {
 	 * Initialize and create the game's scene
 	 */
 	public Scene init(int width, int height) {
-		//clippyArray = {};
 		myRandom = new Random();
 		//create the scene graph for organization
 		root = new Group();
@@ -54,7 +57,6 @@ public class Game {
 		myScene = new Scene(root, width, height);
 		Image image = new Image(getClass().getClassLoader().getResourceAsStream("Clippy.jpg"));
 		clippy = new ImageView(image);
-		//ship = new Circle(10, Color.RED);
 		root.getChildren().add(clippy);
 		clippy.setX(SIZE/2 - 50);
 		clippy.setY(SIZE - 100);
@@ -63,7 +65,7 @@ public class Game {
 		myHealth = new Text(25, SIZE - 50, Integer.toString(100));
 		Text scoreLabel = new Text(SIZE - 50, SIZE - 665, "SCORE");
 		scoreLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
-		myScore = new Text(SIZE - 50, SIZE - 650, Integer.toString(0));
+		setMyScore(new Text(SIZE - 50, SIZE - 650, Integer.toString(0)));
 		root.getChildren().add(myHealth);
 		root.getChildren().add(myScore);
 		root.getChildren().add(scoreLabel);
@@ -75,12 +77,6 @@ public class Game {
 		root.getChildren().add(background);
 		background.toBack(); 
 		click = new Image(getClass().getClassLoader().getResourceAsStream("click.png"));
-		//clicker = new ImageView(click); 
-		//root.getChildren().add(clicker);
-		/*Image screen = new Image(getClass().getClassLoader().getResourceAsStream("windows8.png"));
-		losingScreen = new ImageView(screen);
-		losingScreen.setFitWidth(SIZE);
-		losingScreen.setFitHeight(SIZE); */
 		myScene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
 		myList = new ArrayList<Projectile>();
 		myEnemyList = new ArrayList<Enemy>();
@@ -96,55 +92,32 @@ public class Game {
 	
 	public void step(double elapsedTime) {
 		if (Integer.parseInt(myHealth.getText()) <= 0) {
-			
-		
-		runnable.run(); }
+		runnable.run(); 
+		}
 		counter++;
 		//call update method for each projectile in myLIst
 		for (Projectile x: myList) {
 				x.updatePosition(elapsedTime);
 		}
-		
 		//initialize motion of enemies
-		if (Math.floorMod(counter, 100) == 0) {
-			Enemy enemy = new Enemy();
-			myEnemyList.add(enemy);
-			root.getChildren().add(enemy.getEnemy());
-			enemy.initializePositionEnemy();
-		}
-		
-		//enemies firing projectiles
-		for (Enemy a: myEnemyList) {
-			if (a.getEnemy().isVisible() && Math.floorMod(counter,  300) == 0) {
-				Projectile projectileOne = new Projectile(click);
-				myEnemyProjectile.add(projectileOne);
-				root.getChildren().add(projectileOne.getEnemyProjectile());
-				projectileOne.initializeMotionEnemyProjectile(a.getEnemy());
-			}
-		} 
-		
-		/*for (Projectile x: myEnemyProjectile)
-					//myEnemyProjectile.add(projectileOne);
-				x.updatePositionEnemy(elapsedTime);  */
+		createEnemy();
+		enemyFireProjectile(); 
 		//detection between enemy and projectile fired from user
-		for (int i = 0; i < myEnemyList.size(); i++) {
-			//if (myEnemyList.get(i).getEnemy().getX() > SIZE || myEnemyList.get(i).getEnemy().getY() > SIZE || !myEnemyList.get(i).getEnemy().isVisible())
-				//myEnemyList.remove(i);
-			//if (myEnemyList.size() > 0)
-				myEnemyList.get(i).updatePositionEnemy(elapsedTime);
-			for (int j = 0; j < myList.size(); j++) {
-				if (myEnemyList.get(i).getEnemy().getBoundsInParent().intersects(myList.get(j).getProjectile().getBoundsInParent()) && myList.get(j).getProjectile().isVisible() && myEnemyList.get(i).getEnemy().isVisible()) {
-					myEnemyList.get(i).getEnemy().setVisible(false);
-					myList.get(j).getProjectile().setVisible(false);
-					myScore.setText(Integer.toString(Integer.parseInt(myScore.getText()) + 100));
-				} 
-			} 
-		}  
-		
-		
-
+		collisionDetectionEnemyUser(elapsedTime); 
 		//detection between projectile fired from enemy and projectile fired from user
+		collisionDetectionEnemyProjectileUser(elapsedTime);
+	}
+
+	/**
+	 * 
+	 * @param elapsedTime time that has elapsed in game so far
+	 */
+	public void collisionDetectionEnemyProjectileUser(double elapsedTime) {
 		for (Projectile x: myEnemyProjectile) { 
+			if (x.getEnemyProjectile().getBoundsInParent().intersects(clippy.getBoundsInParent()) && x.getEnemyProjectile().isVisible() && !x.getHasCollided()) {
+				myHealth.setText(Integer.toString(Integer.parseInt(myHealth.getText()) - 1)); 
+				x.setHasCollided(true);
+			}
 			x.updatePositionEnemyProjectile(elapsedTime);
 			for (Projectile y: myList) {
 				if (x.getEnemyProjectile().getBoundsInParent().intersects(y.getProjectile().getBoundsInParent()) && x.getEnemyProjectile().isVisible() && y.getProjectile().isVisible()) {
@@ -153,36 +126,58 @@ public class Game {
 				}
 			}
 		}
-		
-		//detection between enemy and user
+	}
+
+	/**
+	 * collision detection between enemy and user as well as user projectiles and enemy
+	 * @param elapsedTime time elpased in game so far
+	 */
+	public void collisionDetectionEnemyUser(double elapsedTime) {
 		for (int i = 0; i < myEnemyList.size(); i++) {
 			if (myEnemyList.get(i).getEnemy().getBoundsInParent().intersects(clippy.getBoundsInParent()) && (myEnemyList.get(i).getEnemy().isVisible()) && !myEnemyList.get(i).getHasCollided()) {
-					myHealth.setText(Integer.toString(Integer.parseInt(myHealth.getText()) - 5));
-					myEnemyList.get(i).setHasCollided(true);
-				}
-			}
-		
-		
-		//detection between projectiles from enemy and user
-		for (Projectile x: myEnemyProjectile) { 
-			if (x.getEnemyProjectile().getBoundsInParent().intersects(clippy.getBoundsInParent()) && x.getEnemyProjectile().isVisible() && !x.getHasCollided()) {
-				myHealth.setText(Integer.toString(Integer.parseInt(myHealth.getText()) - 1)); 
-				x.setHasCollided(true);
+				myHealth.setText(Integer.toString(Integer.parseInt(myHealth.getText()) - 5));
+				myEnemyList.get(i).setHasCollided(true);
+			}	
+			myEnemyList.get(i).updatePositionEnemy(elapsedTime);
+			for (int j = 0; j < myList.size(); j++) {
+				if (myEnemyList.get(i).getEnemy().getBoundsInParent().intersects(myList.get(j).getProjectile().getBoundsInParent()) && myList.get(j).getProjectile().isVisible() && myEnemyList.get(i).getEnemy().isVisible()) {
+					myEnemyList.get(i).getEnemy().setVisible(false);
+					myList.get(j).getProjectile().setVisible(false);
+					myScore.setText(Integer.toString(getMyScore() + 100));
+				} 
+			} 
+		}
+	}
+
+	/**
+	 * Fire projectile from enemy
+	 */
+	public void enemyFireProjectile() {
+		for (Enemy a: myEnemyList) {
+			if (a.getEnemy().isVisible() && Math.floorMod(counter,  300) == 0) {
+				Projectile projectileOne = new Projectile(click);
+				myEnemyProjectile.add(projectileOne);
+				root.getChildren().add(projectileOne.getEnemyProjectile());
+				projectileOne.initializeMotionEnemyProjectile(a.getEnemy());
 			}
 		}
-		
-		
+	}
+	
+	public void createEnemy() {
+		if (Math.floorMod(counter, 100) == 0) {
+			Enemy enemy = new Enemy();
+			myEnemyList.add(enemy);
+			root.getChildren().add(enemy.getEnemy());
+			enemy.initializePositionEnemy();
+		}
 	}
 	/*
 	 * Handles key input
 	 */
-	private void handleKeyInput(KeyCode code) {
+	public void handleKeyInput(KeyCode code) {
 		 switch(code) {
 		 	case SPACE: //fire projectile
-		 		//int index = myRandom.nextInt();
-		 		//System.out.println()
 		 		Projectile projectileTip = new Projectile();
-		 		//System.out.println(projectileTip.getClippyTips().length);
 		 		myList.add(projectileTip);
 		 		root.getChildren().add(projectileTip.getProjectile()); //show projectile in window
 		 		projectileTip.initializeMotionProjectile(clippy);
@@ -206,10 +201,16 @@ public class Game {
 		 		myHealth.setText(Integer.toString(0));
 		 		break;
 		 	case S:
-		 		myScore.setText(Integer.toString(Integer.parseInt(myScore.getText()) + 500));
+		 		myScore.setText(Integer.toString((getMyScore() + 500)));
 		 		break;
 		 	default:
 		 }
 	 }
+	public int getMyScore() {
+		return Integer.parseInt(myScore.getText());
+	}
+	public void setMyScore(Text myScore) {
+		this.myScore = myScore;
+	}
 	
 }

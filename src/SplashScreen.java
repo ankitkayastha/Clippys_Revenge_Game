@@ -7,7 +7,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.image.*;
-public class setSplashScreen {
+public class SplashScreen {
 	
 	private Scene mySplashScene;
 	private Group mySplashRoot;
@@ -16,7 +16,7 @@ public class setSplashScreen {
 	private Text myTitlePartTwo;
 	private Runnable myRunnable;
 	
-	public setSplashScreen(Runnable x) {
+	public SplashScreen(Runnable x) {
 		myRunnable = x;
 		
 	}
