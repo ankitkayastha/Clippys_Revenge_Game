@@ -53,8 +53,6 @@ public class SplashScreen {
 	public void handleKeyInput(KeyCode code) {
 		if (code.equals(KeyCode.SPACE)) {
 			myRunnable.run();
-			//s.setScene(scene);
-			//s.show(); }
 		}
 	}
 }

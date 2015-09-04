@@ -46,14 +46,8 @@ public class Boss {
 			BOSS_Y_SPEED = BOSS_Y_SPEED * -1;
 			
 	}
+			
 	
-	public void fireProjectile(Image click, Group root, ImageView enemyProjectile) {
-		Projectile projectile = new Projectile(click);
-		bossProjectileList.add(projectile);
-		enemyProjectile = new ImageView(click);
-		root.getChildren().add(enemyProjectile);
-		
-	}
 	public void checkBoss(Text lives) {
 		if (Integer.parseInt(lives.getText()) <= 0)
 			System.out.println("You win!");

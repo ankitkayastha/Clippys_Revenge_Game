@@ -22,20 +22,12 @@ public class GameLevelTwo extends Game {
 	private boolean bossHasBeenAdded = false;
 	private int counter;
 	private boolean labelsAdded = false;
+	
 	public GameLevelTwo(Runnable x, Runnable y) {
 		super(x, null);
-		//losingScreen = x;
 		winningScreen = y;
 	}
 
-//	@Override
-//	public Group getGroup() {
-//		System.out.println("Level 2");
-//		return levelTwoRoot;
-//	}
-	/*public int getScore() {
-		return Integer.parseInt(getMyScore());
-	} */
 	
 	public Text getBossHealth() {
 		return bossHealth;
@@ -44,36 +36,33 @@ public class GameLevelTwo extends Game {
 		bossHealth.setText(Integer.toString(Integer.parseInt(bossHealth.getText()) - n));
 	}
 	
-	
-	//myList = new List<Projectile>();
 	public void updateBossLives() {
 		bossLives.setText(Integer.toString(Integer.parseInt(bossLives.getText()) - 1));
 		bossHealth.setText(Integer.toString(100));
 	}
-	
-	/*public GameLevelOne(Runnable x) {
-		runnableLevelTwo = x;
-	} */
 
 	@Override
 	public Scene init(int width, int height) {
-		//init(width, height);
-		//super.init(width, height);
 		Scene scene = getScene();
 		scene = super.init(SIZE, SIZE);
-		//myScene = init(SIZE, SIZE);
 		enemyBoss = new Boss();
 		bossProjectile = new Image(getClass().getClassLoader().getResourceAsStream("Fixafrozenmac.jpg"));
-		//bossProjectile = new ImageView(image);
-		//System.out.println("testing scene");
 		bossProjectileList = new ArrayList<Projectile>();
 		return scene;
 	}  
 	
 	@Override
 	public void step(double elapsedTime) {
-		//if (Integer.parseInt(getHealth().getText()) <= 0)
-			//losingScreen.run();
+		if (bossHasBeenAdded) {
+			for (Enemy y: getEnemyList()) {
+				getGroup().getChildren().remove(y.getEnemy());
+				y.getEnemy().setVisible(false);
+			}
+			for (Projectile x: getEnemyProjectileList()) {
+					getGroup().getChildren().remove(x.getEnemyProjectile());
+					x.getEnemyProjectile().setVisible(false);
+			}
+		} 
 		super.step(elapsedTime);
 		counter++;
 		if (!(enemyBoss.getBoss().getBoundsInParent().intersects(getClippy().getBoundsInParent())))
@@ -82,8 +71,6 @@ public class GameLevelTwo extends Game {
 			super.step(elapsedTime);
 		for (Projectile x: getMyList())
 			x.updatePosition(elapsedTime);
-		//System.out.println("No variables creaed");
-		//System.out.println("Level 2");
 		Projectile projectileBoss = null;
 		if (getMyScore() >= 3000 && !bossHasBeenAdded && !labelsAdded) {
 			bossHealthLabel = new Text(40, 40, "BOSS HEALTH");
@@ -97,25 +84,21 @@ public class GameLevelTwo extends Game {
 			bossLives = new Text(40, 100, Integer.toString(3));
 			getGroup().getChildren().add(bossLives);
 			labelsAdded = true;
-			//System.out.println(bossHasBeenAdded);
 		}
 		if (bossHasBeenAdded) {
 			executeRunnable();
-			//if (getContinuationScreen() == null &
 			for (Enemy y: getEnemyList()) {
 				getGroup().getChildren().remove(y.getEnemy());
+				y.getEnemy().setVisible(false);
 			}
 			for (Projectile x: getEnemyProjectileList()) {
 					getGroup().getChildren().remove(x.getEnemyProjectile());
-				}
-				//getGroup().getChildren().remove(y.getEnemy());
+					x.getEnemyProjectile().setVisible(false);
+			} 
 			if (Integer.parseInt(bossHealth.getText()) <= 0)
 				updateBossLives();
-			//enemyBoss.updateLives(bossHealth, bossLives);
-			//enemyBoss.checkBoss(bossLives);
 			enemyBoss.updateMotion(elapsedTime); 
 			if (Math.floorMod(counter, 100) == 0) {
-				//System.out.println("This is being called again");
 				projectileBoss = new Projectile(bossProjectile);
 				bossProjectileList.add(projectileBoss);
 				getGroup().getChildren().add(projectileBoss.getEnemyProjectile());
@@ -123,8 +106,6 @@ public class GameLevelTwo extends Game {
 			}
 			detectionBossUserProjectile();
 			detectionBossProjectileUser(elapsedTime);
-			//for (Projectile x: bossProjectileList)
-			//	x.updatePositionEnemyProjectile(elapsedTime);
 		}
 	}
 	
@@ -137,7 +118,7 @@ public class GameLevelTwo extends Game {
 	//detection between boss projectile and user/boss projectile and user projectile
 	public void detectionBossProjectileUser(double elapsedTime) {
 		for (Projectile x: bossProjectileList) {
-			if (x.getEnemyProjectile().getBoundsInParent().intersects(getClippy().getBoundsInParent()) && !x.getHasCollided()) {
+			if (x.getEnemyProjectile().getBoundsInParent().intersects(getClippy().getBoundsInParent()) && !x.getHasCollided() && x.getEnemyProjectile().isVisible()) {
 				getHealth().setText(Integer.toString(Integer.parseInt(getHealth().getText()) - 5 ));
 				x.setHasCollided(true);
 			}
@@ -160,7 +141,6 @@ public class GameLevelTwo extends Game {
 		}
 		for (Projectile x: getMyList()) {
 			if (x.getProjectile().getBoundsInParent().intersects(enemyBoss.getBoss().getBoundsInParent()) && !x.getHasCollided() && x.getProjectile().isVisible()) {
-				//System.out.println("Health being updated");
 				updateBossHealth(10); 
 				x.setHasCollided(true);
 				x.getProjectile().setVisible(false);

@@ -35,9 +35,7 @@ public class Game {
 	public int getCounter() {
 		return counter;
 	}
-	//public Game() {
-	//	
-	//}
+	
 	public List<Projectile> getMyList() {
 		return myList;
 	}
@@ -112,7 +110,6 @@ public class Game {
 	} 
 	public Text getHealth() {
 		return myHealth;
-		//(Integer.parseInt(myHealth.getText()));
 	}
 	/*
 	 * This method will run during the game loop to update the shapes/game
@@ -127,7 +124,6 @@ public class Game {
 		//call update method for each projectile in myLIst
 		//System.out.println(myList.size());
 		for (Projectile x: myList) {
-			//System.out.println("This is being called");	
 			x.updatePosition(elapsedTime);
 		}
 		//initialize motion of enemies

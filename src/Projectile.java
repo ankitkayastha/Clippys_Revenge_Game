@@ -28,9 +28,7 @@ public class Projectile {
 	}
 	public Projectile() {
 		myProjectile = new Text(clippyTips[myClippyRandom.nextInt(clippyTips.length)]);
-		myProjectile.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
-		//myProjectile.setWrappingWidth(5);
-		//myProjectile.setWrappingLength()
+		myProjectile.setFont(Font.font("Verdana", FontWeight.BOLD, 12));
 	}
 	public boolean getHasCollided() {
 		return hasCollided;
@@ -66,7 +64,6 @@ public class Projectile {
 	 * This method will update the position of the enemy projectiles
 	 */
 	public void updatePositionEnemyProjectile(double elapsedTime) {
-		myEnemyProjectile.setRotate(myEnemyProjectile.getRotate()+10.0);
 		myEnemyProjectile.setY(myEnemyProjectile.getY() + ENEMY_PROJECTILE_SPEED * elapsedTime);
 	}
 	/*

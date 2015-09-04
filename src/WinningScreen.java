@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 public class WinningScreen {
 	private int SIZE = 700;
@@ -26,13 +27,9 @@ public class WinningScreen {
 		myWinningRoot.getChildren().add(clippyPic);
 		clippyPic.setX(SIZE / 2);
 		clippyPic.setY(200);
-//		Button button = new Button("CLOSE THE PROGRAM");
-//		myWinningRoot.getChildren().add(button);
-//		button.setFont(Font.font("Times New Roman", FontWeight.BOLD, 18));
-//		button.setTranslateX(300);
-//		button.setTranslateY(350);
-//		button.setOnAction(e -> handleMouseClicked());
-		
+		Text myText = new Text(0, SIZE/2, "CONGRATULATIONS!! YOU HAVE WON!");
+		myText.setFont(Font.font("Times New Roman", FontWeight.BOLD, 35));
+		myWinningRoot.getChildren().add(myText);
 		return myWinningScene;
 	}
 }
