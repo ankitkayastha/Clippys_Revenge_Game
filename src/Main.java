@@ -1,5 +1,6 @@
 
 
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -17,6 +18,8 @@ public class Main extends Application {
 	private ImageView losingScreen;
 	private Timeline animation;
 	private Timeline animationTwo;
+	private WinningScreen winning;
+	private ContinuationScreen continuation;
 	private SplashScreen splash;
 	private Game myGame;
 	private Game levelTwo;
@@ -26,25 +29,57 @@ public class Main extends Application {
 	@Override
 	public void start(Stage s) {
 		
-		myGame = new Game(() -> setLosingScreen(myGame.getGroup())); //create new game
+		myGame = new Game(() -> setLosingScreen(myGame.getGroup()), () -> setContinuationScreen(s)); //create new game
 		s.setTitle(myGame.getTitle()); //set title of game
-		splash = new SplashScreen(() -> setScene(s));
+		splash = new SplashScreen(() -> setSceneLevelOne(s));
 		Scene splashScene = splash.init(SIZE, SIZE);
 		s.setScene(splashScene); 
 		s.show();
-		levelTwo = new GameLevelTwo(() -> setLosingScreen(levelTwo.getGroup()));
-		//s.setScene(levelTwo.init(SIZE, SIZE));
-		//levelTwo.step(SECOND_DELAY);
-		//s.show();
-		//KeyFrame frameLevelTwo = new KeyFrame(Duration.millis(MILLISECOND_DELAY),e -> levelTwo.step(SECOND_DELAY));
-		//animation = new Timeline();
-		//animation.setCycleCount(Timeline.INDEFINITE); //will go on for indefinite time
-		//animation.getKeyFrames().add(frameLevelTwo);
-		//animation.play();
-		//attach game to stage and display it
-		//setScene(s);
-			}
-	private void setScene(Stage s) {
+		continuation = new ContinuationScreen(() -> setSceneLevelTwo(s));
+		//Scene continuationScene = continuation.init(SIZE, SIZE);
+		levelTwo = new GameLevelTwo(() -> setWinningScreen(s), () -> setLosingScreen(levelTwo.getGroup()));
+		winning = new WinningScreen();
+	}
+	
+	
+	private void setWinningScreen(Stage s) {
+		
+		animation.stop();
+		Scene winningScene = winning.init(SIZE, SIZE);
+		s.setScene(winningScene);
+		s.show();
+	}
+	
+	
+	private void setContinuationScreen(Stage s) {
+		
+		
+		//stop animation to stop crashing
+		animation.stop();
+		Scene continuationScene = continuation.init(SIZE, SIZE);
+		s.setScene(continuationScene);
+		s.show();
+	}
+	
+	
+	
+	private void setSceneLevelTwo(Stage s) {
+		Scene scene = levelTwo.init(SIZE, SIZE);
+		s.setScene(scene);
+		s.show();
+		
+		KeyFrame frameTwo = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e-> levelTwo.step(SECOND_DELAY));
+		animation = new Timeline();
+		animation.setCycleCount(Timeline.INDEFINITE);
+		animation.getKeyFrames().add(frameTwo);
+		animation.play();
+		
+	}
+	
+	
+	
+	
+	private void setSceneLevelOne(Stage s) {
 		Scene scene = myGame.init(SIZE, SIZE);
 		s.setScene(scene);
 		s.show();

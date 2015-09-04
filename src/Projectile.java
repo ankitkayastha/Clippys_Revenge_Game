@@ -66,6 +66,7 @@ public class Projectile {
 	 * This method will update the position of the enemy projectiles
 	 */
 	public void updatePositionEnemyProjectile(double elapsedTime) {
+		myEnemyProjectile.setRotate(myEnemyProjectile.getRotate()+10.0);
 		myEnemyProjectile.setY(myEnemyProjectile.getY() + ENEMY_PROJECTILE_SPEED * elapsedTime);
 	}
 	/*

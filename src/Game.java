@@ -29,7 +29,8 @@ public class Game {
 	private ImageView losingScreen;
 	private Image click; 
 	private ImageView background;
-	private Runnable runnable;
+	private Runnable continuationScreenRunnable;
+	private Runnable losingScreenRunnable;
 	private List<Projectile> myEnemyProjectile;//list of enemy projectiles
 	public int getCounter() {
 		return counter;
@@ -59,11 +60,18 @@ public class Game {
 	public Scene getScene() {
 		return myScene;
 	}
+	public Runnable getContinuationScreenRunnable() {
+		return continuationScreenRunnable;
+	}
+	
+	
+	
 	public Group getGroup() {
 		return root;
 	}
-	public Game (Runnable y) {
-		runnable = y;
+	public Game (Runnable x, Runnable y) {
+		losingScreenRunnable = x;
+		continuationScreenRunnable = y;
 	}
 	/*
 	 * Initialize and create the game's scene
@@ -112,8 +120,9 @@ public class Game {
 	
 	public void step(double elapsedTime) {
 		if (Integer.parseInt(getHealth().getText()) <= 0) {
-		runnable.run(); 
+			losingScreenRunnable.run(); 
 		}
+			executeRunnable();
 		counter++;
 		//call update method for each projectile in myLIst
 		//System.out.println(myList.size());
@@ -129,7 +138,15 @@ public class Game {
 		//detection between projectile fired from enemy and projectile fired from user
 		collisionDetectionEnemyProjectileUser(elapsedTime);
 	}
-
+		
+		
+		
+		
+	public void executeRunnable() {
+		if (Integer.parseInt(myScore.getText()) >= 2000)
+			continuationScreenRunnable.run();
+	}
+	
 	/**
 	 * 
 	 * @param elapsedTime time that has elapsed in game so far

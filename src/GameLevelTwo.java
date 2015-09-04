@@ -8,8 +8,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.text.Text;
 
 public class GameLevelTwo extends Game {
-	private Runnable runnableLevelTwo;
-	//private Scene myScene;
+	private Runnable losingScreen;
+	private Runnable winningScreen;
 	private Boss enemyBoss;
 	private Text bossLives;
 	private Text bossHealth;
@@ -22,8 +22,9 @@ public class GameLevelTwo extends Game {
 	private boolean bossHasBeenAdded = false;
 	private int counter;
 	private boolean labelsAdded = false;
-	public GameLevelTwo(Runnable y) {
-		super(y);
+	public GameLevelTwo(Runnable x, Runnable y) {
+		winningScreen = x;
+		losingScreen = y;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -95,6 +96,8 @@ public class GameLevelTwo extends Game {
 			//System.out.println(bossHasBeenAdded);
 		}
 		if (bossHasBeenAdded) {
+			executeRunnable();
+			//if (getContinuationScreen() == null &
 			for (Enemy y: getEnemyList()) {
 				getGroup().getChildren().remove(y.getEnemy());
 			}
@@ -121,7 +124,11 @@ public class GameLevelTwo extends Game {
 		}
 	}
 	
-	
+	@Override
+	public void executeRunnable() {
+		if (bossLives != null && Integer.parseInt(bossLives.getText()) <= 0)
+			winningScreen.run();
+	}
 	
 	//detection between boss projectile and user/boss projectile and user projectile
 	public void detectionBossProjectileUser(double elapsedTime) {
