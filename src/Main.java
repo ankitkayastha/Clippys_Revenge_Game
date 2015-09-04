@@ -37,7 +37,7 @@ public class Main extends Application {
 		s.show();
 		continuation = new ContinuationScreen(() -> setSceneLevelTwo(s));
 		//Scene continuationScene = continuation.init(SIZE, SIZE);
-		levelTwo = new GameLevelTwo(() -> setWinningScreen(s), () -> setLosingScreen(levelTwo.getGroup()));
+		levelTwo = new GameLevelTwo(() -> setLosingScreen(levelTwo.getGroup()), () -> setWinningScreen(s));
 		winning = new WinningScreen();
 	}
 	

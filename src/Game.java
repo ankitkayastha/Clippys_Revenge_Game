@@ -35,9 +35,9 @@ public class Game {
 	public int getCounter() {
 		return counter;
 	}
-	public Game() {
-		
-	}
+	//public Game() {
+	//	
+	//}
 	public List<Projectile> getMyList() {
 		return myList;
 	}

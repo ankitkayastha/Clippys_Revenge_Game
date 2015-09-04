@@ -23,18 +23,19 @@ public class GameLevelTwo extends Game {
 	private int counter;
 	private boolean labelsAdded = false;
 	public GameLevelTwo(Runnable x, Runnable y) {
-		winningScreen = x;
-		losingScreen = y;
-		// TODO Auto-generated constructor stub
+		super(x, null);
+		//losingScreen = x;
+		winningScreen = y;
 	}
 
-
+//	@Override
+//	public Group getGroup() {
+//		System.out.println("Level 2");
+//		return levelTwoRoot;
+//	}
 	/*public int getScore() {
 		return Integer.parseInt(getMyScore());
 	} */
-	public GameLevelTwo() {
-		// TODO Auto-generated constructor stub
-	}
 	
 	public Text getBossHealth() {
 		return bossHealth;
@@ -71,6 +72,9 @@ public class GameLevelTwo extends Game {
 	
 	@Override
 	public void step(double elapsedTime) {
+		//if (Integer.parseInt(getHealth().getText()) <= 0)
+			//losingScreen.run();
+		super.step(elapsedTime);
 		counter++;
 		if (!(enemyBoss.getBoss().getBoundsInParent().intersects(getClippy().getBoundsInParent())))
 			enemyBoss.setBossHasCollided(false);
