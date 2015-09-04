@@ -27,11 +27,6 @@ public class Projectile {
 		return clippyTips;
 	}
 	public Projectile() {
-		//clippyTips[0] = "Hi! I am Clippy";
-		//clippyTips[1] = "Hi!";
-		//System.out.println(clippyTips.length);
-		//System.out.println(myRandom.nextInt(clippyTips.length));
-		//int index = myRandom.nextInt(clippyTips.length);
 		myProjectile = new Text(clippyTips[myClippyRandom.nextInt(clippyTips.length)]);
 		myProjectile.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
 		//myProjectile.setWrappingWidth(5);

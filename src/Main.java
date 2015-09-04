@@ -16,8 +16,10 @@ public class Main extends Application {
 	private static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
 	private ImageView losingScreen;
 	private Timeline animation;
+	private Timeline animationTwo;
 	private SplashScreen splash;
 	private Game myGame;
+	private Game levelTwo;
 	public Timeline getAnimation() {
 		return animation;
 	}
@@ -30,15 +32,18 @@ public class Main extends Application {
 		Scene splashScene = splash.init(SIZE, SIZE);
 		s.setScene(splashScene); 
 		s.show();
-		//GameLevelOne one = new GameLevelOne();
-		//s.setScene(one.initialize(SIZE, SIZE));
+		levelTwo = new GameLevelTwo(() -> setLosingScreen(levelTwo.getGroup()));
+		//s.setScene(levelTwo.init(SIZE, SIZE));
+		//levelTwo.step(SECOND_DELAY);
 		//s.show();
+		//KeyFrame frameLevelTwo = new KeyFrame(Duration.millis(MILLISECOND_DELAY),e -> levelTwo.step(SECOND_DELAY));
+		//animation = new Timeline();
+		//animation.setCycleCount(Timeline.INDEFINITE); //will go on for indefinite time
+		//animation.getKeyFrames().add(frameLevelTwo);
+		//animation.play();
 		//attach game to stage and display it
 		//setScene(s);
-		//if (myGame.getHealth() <= 95)
-			//System.out.println("Should stop");
-			//animation.stop();
-	}
+			}
 	private void setScene(Stage s) {
 		Scene scene = myGame.init(SIZE, SIZE);
 		s.setScene(scene);

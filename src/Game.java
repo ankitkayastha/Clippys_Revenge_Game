@@ -30,16 +30,35 @@ public class Game {
 	private Image click; 
 	private ImageView background;
 	private Runnable runnable;
-	String[] clippyArray = new String[10];
 	private List<Projectile> myEnemyProjectile;//list of enemy projectiles
-	
+	public int getCounter() {
+		return counter;
+	}
 	public Game() {
 		
+	}
+	public List<Projectile> getMyList() {
+		return myList;
+	}
+	public List<Enemy> getEnemyList() {
+		return myEnemyList;
+	}
+	
+	public List<Projectile> getEnemyProjectileList() {
+		return myEnemyProjectile;
+	}
+	public ImageView getClippy() {
+		return clippy;
+	}
+	public Image getImageClick() {
+		return click;
 	}
 	public String getTitle() {
 		return TITLE;
 	}
-	
+	public Scene getScene() {
+		return myScene;
+	}
 	public Group getGroup() {
 		return root;
 	}
@@ -83,21 +102,24 @@ public class Game {
 		myEnemyProjectile = new ArrayList<Projectile>();
 		return myScene;
 	} 
-	public int getHealth() {
-		return (Integer.parseInt(myHealth.getText()));
+	public Text getHealth() {
+		return myHealth;
+		//(Integer.parseInt(myHealth.getText()));
 	}
 	/*
 	 * This method will run during the game loop to update the shapes/game
 	 */
 	
 	public void step(double elapsedTime) {
-		if (Integer.parseInt(myHealth.getText()) <= 0) {
+		if (Integer.parseInt(getHealth().getText()) <= 0) {
 		runnable.run(); 
 		}
 		counter++;
 		//call update method for each projectile in myLIst
+		//System.out.println(myList.size());
 		for (Projectile x: myList) {
-				x.updatePosition(elapsedTime);
+			//System.out.println("This is being called");	
+			x.updatePosition(elapsedTime);
 		}
 		//initialize motion of enemies
 		createEnemy();
@@ -153,12 +175,15 @@ public class Game {
 	 * Fire projectile from enemy
 	 */
 	public void enemyFireProjectile() {
+		//.out.println("This is being called");
 		for (Enemy a: myEnemyList) {
 			if (a.getEnemy().isVisible() && Math.floorMod(counter,  300) == 0) {
 				Projectile projectileOne = new Projectile(click);
 				myEnemyProjectile.add(projectileOne);
+				//System.out.println("This is being called");
 				root.getChildren().add(projectileOne.getEnemyProjectile());
 				projectileOne.initializeMotionEnemyProjectile(a.getEnemy());
+				//System.out.println(projectileOne.getProjectile().isVisible());
 			}
 		}
 	}

@@ -39,5 +39,4 @@ public class Enemy {
 	public void updatePositionEnemy(double elapsedTime) {
 		myEnemy.setY(myEnemy.getY() + ENEMY_SPEED * elapsedTime);
 	}
-	
 }
