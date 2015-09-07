@@ -21,7 +21,7 @@ public class Main extends Application {
 	private WinningScreen winning;
 	private ContinuationScreen continuation;
 	private SplashScreen splash;
-	private Game myGame;
+	private Game levelOne;
 	private Game levelTwo;
 	public Timeline getAnimation() {
 		return animation;
@@ -29,17 +29,16 @@ public class Main extends Application {
 	@Override
 	public void start(Stage s) {
 		
-		myGame = new Game(() -> setLosingScreen(myGame.getGroup()), () -> setContinuationScreen(s)); //create new game
-		s.setTitle(myGame.getTitle()); //set title of game
+		levelOne = new GameLevelOne(() -> setContinuationScreen(s), () -> setLosingScreen(levelOne.getRoot())); //create new game
+		s.setTitle(levelOne.getTitle()); //set title of game
 		splash = new SplashScreen(() -> setSceneLevelOne(s));
 		Scene splashScene = splash.init(SIZE, SIZE);
 		s.setScene(splashScene); 
 		s.show();
 		continuation = new ContinuationScreen(() -> setSceneLevelTwo(s));
-		levelTwo = new GameLevelTwo(() -> setLosingScreen(levelTwo.getGroup()), () -> setWinningScreen(s));
+		levelTwo = new GameLevelTwo(() -> setLosingScreen(levelTwo.getRoot()), () -> setWinningScreen(s));
 		winning = new WinningScreen();
 	}
-	
 	
 	private void setWinningScreen(Stage s) {
 		
@@ -48,7 +47,6 @@ public class Main extends Application {
 		s.setScene(winningScene);
 		s.show();
 	}
-	
 	
 	private void setContinuationScreen(Stage s) {
 		
@@ -59,8 +57,6 @@ public class Main extends Application {
 		s.setScene(continuationScene);
 		s.show();
 	}
-	
-	
 	
 	private void setSceneLevelTwo(Stage s) {
 		Scene scene = levelTwo.init(SIZE, SIZE);
@@ -75,16 +71,13 @@ public class Main extends Application {
 		
 	}
 	
-	
-	
-	
 	private void setSceneLevelOne(Stage s) {
-		Scene scene = myGame.init(SIZE, SIZE);
+		Scene scene = levelOne.init(SIZE, SIZE);
 		s.setScene(scene);
 		s.show();
 		
 		//game loop and timeline, add key frame to timeline
-		KeyFrame frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),e -> myGame.step(SECOND_DELAY));
+		KeyFrame frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),e -> levelOne.step(SECOND_DELAY));
 		animation = new Timeline();
 		animation.setCycleCount(Timeline.INDEFINITE); //will go on for indefinite time
 		animation.getKeyFrames().add(frame);

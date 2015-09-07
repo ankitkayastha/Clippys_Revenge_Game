@@ -1,3 +1,6 @@
+// This entire file is part of my masterpiece.
+// Ankit Kayastha
+
 import java.util.*; 
 
 import javafx.scene.Group;
@@ -16,7 +19,6 @@ public class GameLevelTwo extends Game {
 	private Group levelTwoRoot;
 	private Text bossHealthLabel;
 	private Text bossLivesLabel;
-	//private ImageView bossProjectile;
 	private Image bossProjectile;
 	private List<Projectile> bossProjectileList;
 	private boolean bossHasBeenAdded = false;
@@ -24,11 +26,10 @@ public class GameLevelTwo extends Game {
 	private boolean labelsAdded = false;
 	
 	public GameLevelTwo(Runnable x, Runnable y) {
-		super(x, null);
+		super(x);
 		winningScreen = y;
 	}
 
-	
 	public Text getBossHealth() {
 		return bossHealth;
 	}
@@ -43,23 +44,24 @@ public class GameLevelTwo extends Game {
 
 	@Override
 	public Scene init(int width, int height) {
-		Scene scene = getScene();
-		scene = super.init(SIZE, SIZE);
+		Scene scene = super.init(SIZE, SIZE);
 		enemyBoss = new Boss();
 		bossProjectile = new Image(getClass().getClassLoader().getResourceAsStream("Fixafrozenmac.jpg"));
 		bossProjectileList = new ArrayList<Projectile>();
 		return scene;
 	}  
 	
+	
+	
 	@Override
 	public void step(double elapsedTime) {
 		if (bossHasBeenAdded) {
-			for (Enemy y: getEnemyList()) {
-				getGroup().getChildren().remove(y.getEnemy());
+			for (Enemy y: getMyEnemyList()) {
+				getRoot().getChildren().remove(y.getEnemy());
 				y.getEnemy().setVisible(false);
 			}
-			for (Projectile x: getEnemyProjectileList()) {
-					getGroup().getChildren().remove(x.getEnemyProjectile());
+			for (Projectile x: getMyEnemyProjectile()) {
+					getRoot().getChildren().remove(x.getEnemyProjectile());
 					x.getEnemyProjectile().setVisible(false);
 			}
 		} 
@@ -72,27 +74,27 @@ public class GameLevelTwo extends Game {
 		for (Projectile x: getMyList())
 			x.updatePosition(elapsedTime);
 		Projectile projectileBoss = null;
-		if (getMyScore() >= 3000 && !bossHasBeenAdded && !labelsAdded) {
+		if (Integer.parseInt(getMyScore().getText()) >= 3000 && !bossHasBeenAdded && !labelsAdded) {
 			bossHealthLabel = new Text(40, 40, "BOSS HEALTH");
-			getGroup().getChildren().add(enemyBoss.getBoss());
-			getGroup().getChildren().add(bossHealthLabel);
+			getRoot().getChildren().add(enemyBoss.getBoss());
+			getRoot().getChildren().add(bossHealthLabel);
 			bossHealth = new Text(40, 60, Integer.toString(100));
-			getGroup().getChildren().add(bossHealth);
+			getRoot().getChildren().add(bossHealth);
 			bossHasBeenAdded = true;
 			bossLivesLabel = new Text(40, 80, "# BOSS LIVES");
-			getGroup().getChildren().add(bossLivesLabel);
+			getRoot().getChildren().add(bossLivesLabel);
 			bossLives = new Text(40, 100, Integer.toString(3));
-			getGroup().getChildren().add(bossLives);
+			getRoot().getChildren().add(bossLives);
 			labelsAdded = true;
 		}
 		if (bossHasBeenAdded) {
 			executeRunnable();
-			for (Enemy y: getEnemyList()) {
-				getGroup().getChildren().remove(y.getEnemy());
+			for (Enemy y: getMyEnemyList()) {
+				getRoot().getChildren().remove(y.getEnemy());
 				y.getEnemy().setVisible(false);
 			}
-			for (Projectile x: getEnemyProjectileList()) {
-					getGroup().getChildren().remove(x.getEnemyProjectile());
+			for (Projectile x: getMyEnemyProjectile()) {
+					getRoot().getChildren().remove(x.getEnemyProjectile());
 					x.getEnemyProjectile().setVisible(false);
 			} 
 			if (Integer.parseInt(bossHealth.getText()) <= 0)
@@ -101,7 +103,7 @@ public class GameLevelTwo extends Game {
 			if (Math.floorMod(counter, 100) == 0) {
 				projectileBoss = new Projectile(bossProjectile);
 				bossProjectileList.add(projectileBoss);
-				getGroup().getChildren().add(projectileBoss.getEnemyProjectile());
+				getRoot().getChildren().add(projectileBoss.getEnemyProjectile());
 				projectileBoss.initializeMotionEnemyProjectile(enemyBoss.getBoss());
 			}
 			detectionBossUserProjectile();
@@ -114,15 +116,13 @@ public class GameLevelTwo extends Game {
 		if (bossLives != null && Integer.parseInt(bossLives.getText()) <= 0)
 			winningScreen.run();
 	}
-	
 	//detection between boss projectile and user/boss projectile and user projectile
 	public void detectionBossProjectileUser(double elapsedTime) {
 		for (Projectile x: bossProjectileList) {
 			if (x.getEnemyProjectile().getBoundsInParent().intersects(getClippy().getBoundsInParent()) && !x.getHasCollided() && x.getEnemyProjectile().isVisible()) {
-				getHealth().setText(Integer.toString(Integer.parseInt(getHealth().getText()) - 5 ));
+				getMyHealth().setText(Integer.toString(Integer.parseInt(getMyHealth().getText()) - 5 ));
 				x.setHasCollided(true);
 			}
-		
 			x.updatePositionEnemyProjectile(elapsedTime);
 			for (Projectile y: getMyList()) {
 				if (x.getEnemyProjectile().getBoundsInParent().intersects(y.getProjectile().getBoundsInParent()) && x.getEnemyProjectile().isVisible() && y.getProjectile().isVisible()) {
@@ -136,7 +136,7 @@ public class GameLevelTwo extends Game {
 	//detection between boss and clippy, user projectile and boss
 	public void detectionBossUserProjectile() {
 		if (enemyBoss.getBoss().getBoundsInParent().intersects(getClippy().getBoundsInParent()) && !enemyBoss.getBossHasCollided()) {
-			getHealth().setText(Integer.toString(Integer.parseInt(getHealth().getText()) - 10));
+			getMyHealth().setText(Integer.toString(Integer.parseInt(getMyHealth().getText()) - 10));
 			enemyBoss.setBossHasCollided(true);
 		}
 		for (Projectile x: getMyList()) {
@@ -157,7 +157,5 @@ public class GameLevelTwo extends Game {
 		default:
 			break;
 		}
-		
 	}
-	
 }

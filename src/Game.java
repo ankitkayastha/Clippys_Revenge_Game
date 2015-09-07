@@ -1,19 +1,21 @@
+// This entire file is part of my masterpiece.
+// Ankit Kayastha
 
-import javafx.application.Platform;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.paint.Color;
 
-import java.util.*;
-public class Game {
+public abstract class Game {
 	private static final String TITLE = "Clippy's Revenge";
 	public static final int SIZE = 700;
 	private static final int KEY_INPUT_SPEED = 5;
@@ -32,6 +34,26 @@ public class Game {
 	private Runnable continuationScreenRunnable;
 	private Runnable losingScreenRunnable;
 	private List<Projectile> myEnemyProjectile;//list of enemy projectiles
+	private Text healthLabel;
+	private Text scoreLabel;
+	
+	public Game(Runnable y) {
+		losingScreenRunnable = y;
+	}
+	
+	public Group getRoot() {
+		return root;
+	}
+	public Scene getMyScene() {
+		return myScene;
+	}
+	public ImageView getClippy() {
+		return clippy;
+	}
+	public List<Enemy> getMyEnemyList() {
+		return myEnemyList;
+	}
+	
 	public int getCounter() {
 		return counter;
 	}
@@ -39,90 +61,83 @@ public class Game {
 	public List<Projectile> getMyList() {
 		return myList;
 	}
-	public List<Enemy> getEnemyList() {
-		return myEnemyList;
-	}
-	
-	public List<Projectile> getEnemyProjectileList() {
-		return myEnemyProjectile;
-	}
-	public ImageView getClippy() {
-		return clippy;
-	}
-	public Image getImageClick() {
-		return click;
-	}
 	public String getTitle() {
 		return TITLE;
 	}
-	public Scene getScene() {
-		return myScene;
+	public Text getMyHealth() {
+		return myHealth;
+	}
+	public void setMyHealth(Text myHealth) {
+		this.myHealth = myHealth;
+	}
+	public Text getMyScore() {
+		return myScore;
+	}
+	public void setMyScore(Text myScore) {
+		this.myScore = myScore;
+	}
+	public ImageView getLosingScreen() {
+		return losingScreen;
+	}
+	public void setLosingScreen(ImageView losingScreen) {
+		this.losingScreen = losingScreen;
+	}
+	public Image getClick() {
+		return click;
 	}
 	public Runnable getContinuationScreenRunnable() {
 		return continuationScreenRunnable;
 	}
-	
-	
-	
-	public Group getGroup() {
-		return root;
+
+	public Runnable getLosingScreenRunnable() {
+		return losingScreenRunnable;
 	}
-	public Game (Runnable x, Runnable y) {
-		losingScreenRunnable = x;
-		continuationScreenRunnable = y;
+
+	public List<Projectile> getMyEnemyProjectile() {
+		return myEnemyProjectile;
 	}
-	/*
-	 * Initialize and create the game's scene
-	 */
+
+	public Text getHealthLabel() {
+		return healthLabel;
+	}
+	
 	public Scene init(int width, int height) {
 		myRandom = new Random();
-		//create the scene graph for organization
 		root = new Group();
-		//create the scene to see the shapes
 		myScene = new Scene(root, width, height);
-		Image image = new Image(getClass().getClassLoader().getResourceAsStream("Clippy.jpg"));
-		clippy = new ImageView(image);
-		root.getChildren().add(clippy);
-		clippy.setX(SIZE/2 - 50);
-		clippy.setY(SIZE - 100);
-		Text healthLabel = new Text(25, SIZE - 65, "HEALTH");
+		String[] fileNames = {"Clippy.jpg", "WindowsBackground.jpg"};
+		ImageView[] myImageViews = createImageView(fileNames);
+		clippy = myImageViews[0];
+		background = myImageViews[1];
+		healthLabel = new Text(25, SIZE - 65, "HEALTH");
 		healthLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
+
 		myHealth = new Text(25, SIZE - 50, Integer.toString(100));
-		Text scoreLabel = new Text(SIZE - 50, SIZE - 665, "SCORE");
-		scoreLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
-		setMyScore(new Text(SIZE - 50, SIZE - 650, Integer.toString(0)));
-		root.getChildren().add(myHealth);
-		root.getChildren().add(myScore);
-		root.getChildren().add(scoreLabel);
-		root.getChildren().add(healthLabel);
-		Image imageTwo = new Image(getClass().getClassLoader().getResourceAsStream("WindowsBackground.jpg"));
-		background = new ImageView(imageTwo);
+		scoreLabel = new Text(SIZE - 50, SIZE - 665, "SCORE");
 		background.setFitHeight(SIZE);
 		background.setFitWidth(SIZE);
-		root.getChildren().add(background);
-		background.toBack(); 
+		setMyScore(new Text(SIZE - 50, SIZE - 650, Integer.toString(0)));
+		Node[] myArray = {clippy, getHealthLabel(), myHealth, scoreLabel, myScore, background};
+		addToRoot(myArray);
+		background.toBack();
+		scoreLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
+		clippy.setX(SIZE/2 - 50);
+		clippy.setY(SIZE - 100);
 		click = new Image(getClass().getClassLoader().getResourceAsStream("click.png"));
 		myScene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
 		myList = new ArrayList<Projectile>();
 		myEnemyList = new ArrayList<Enemy>();
 		myEnemyProjectile = new ArrayList<Projectile>();
+		
 		return myScene;
-	} 
-	public Text getHealth() {
-		return myHealth;
+		
 	}
-	/*
-	 * This method will run during the game loop to update the shapes/game
-	 */
-	
+
 	public void step(double elapsedTime) {
-		if (Integer.parseInt(getHealth().getText()) <= 0) {
+		if (Integer.parseInt(myHealth.getText()) <= 0) {
 			losingScreenRunnable.run(); 
 		}
-			executeRunnable();
-		counter++;
-		//call update method for each projectile in myLIst
-		//System.out.println(myList.size());
+	counter++;
 		for (Projectile x: myList) {
 			x.updatePosition(elapsedTime);
 		}
@@ -133,14 +148,6 @@ public class Game {
 		collisionDetectionEnemyUser(elapsedTime); 
 		//detection between projectile fired from enemy and projectile fired from user
 		collisionDetectionEnemyProjectileUser(elapsedTime);
-	}
-		
-		
-		
-		
-	public void executeRunnable() {
-		if (Integer.parseInt(myScore.getText()) >= 2000)
-			continuationScreenRunnable.run();
 	}
 	
 	/**
@@ -162,7 +169,7 @@ public class Game {
 			}
 		}
 	}
-
+	public abstract void executeRunnable();
 	/**
 	 * collision detection between enemy and user as well as user projectiles and enemy
 	 * @param elapsedTime time elpased in game so far
@@ -178,25 +185,19 @@ public class Game {
 				if (myEnemyList.get(i).getEnemy().getBoundsInParent().intersects(myList.get(j).getProjectile().getBoundsInParent()) && myList.get(j).getProjectile().isVisible() && myEnemyList.get(i).getEnemy().isVisible()) {
 					myEnemyList.get(i).getEnemy().setVisible(false);
 					myList.get(j).getProjectile().setVisible(false);
-					myScore.setText(Integer.toString(getMyScore() + 100));
+					myScore.setText(Integer.toString(Integer.parseInt(myScore.getText()) + 100));
 				} 
 			} 
 		}
 	}
 
-	/**
-	 * Fire projectile from enemy
-	 */
 	public void enemyFireProjectile() {
-		//.out.println("This is being called");
 		for (Enemy a: myEnemyList) {
 			if (a.getEnemy().isVisible() && Math.floorMod(counter,  300) == 0) {
 				Projectile projectileOne = new Projectile(click);
 				myEnemyProjectile.add(projectileOne);
-				//System.out.println("This is being called");
 				root.getChildren().add(projectileOne.getEnemyProjectile());
 				projectileOne.initializeMotionEnemyProjectile(a.getEnemy());
-				//System.out.println(projectileOne.getProjectile().isVisible());
 			}
 		}
 	}
@@ -209,9 +210,22 @@ public class Game {
 			enemy.initializePositionEnemy();
 		}
 	}
-	/*
-	 * Handles key input
-	 */
+	public ImageView[] createImageView(String[] fileName) {
+		Image[] myImageArray = new Image[fileName.length];
+		ImageView[] myImages = new ImageView[fileName.length];
+		for (int i = 0; i < fileName.length; i++) {
+			myImageArray[i] = new Image(getClass().getClassLoader().getResourceAsStream(fileName[i]));
+			myImages[i] = new ImageView(myImageArray[i]);
+		}
+		return myImages;
+	}
+	
+	public void addToRoot(Node[] myObjectArray) {
+		for (int i = 0; i < myObjectArray.length; i++) {
+			root.getChildren().add(myObjectArray[i]);
+		}
+	}
+	
 	public void handleKeyInput(KeyCode code) {
 		 switch(code) {
 		 	case SPACE: //fire projectile
@@ -239,16 +253,9 @@ public class Game {
 		 		myHealth.setText(Integer.toString(0));
 		 		break;
 		 	case S:
-		 		myScore.setText(Integer.toString((getMyScore() + 500)));
+		 		myScore.setText(Integer.toString((Integer.parseInt(myScore.getText()) + 500)));
 		 		break;
 		 	default:
 		 }
 	 }
-	public int getMyScore() {
-		return Integer.parseInt(myScore.getText());
-	}
-	public void setMyScore(Text myScore) {
-		this.myScore = myScore;
-	}
-	
 }
